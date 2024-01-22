@@ -32,8 +32,50 @@ public class Attribute {
         }catch (IndexOutOfBoundsException e){
 
         }
-        return "Null";
+        return "null";
     }
+    public boolean compareValue(Attribute other,String operation,int index){
+        if(this.getValue(index).equals("null")){
+            return false;
+        }
+
+        switch (operation){
+            case "=":
+                return this.getValue(index).equals(other.getValue(index));
+
+            case "!=":
+                return !this.getValue(index).equals(other.getValue(index));
+
+            case "<":
+                try{
+                    return Integer.parseInt(this.getValue(index)) < Integer.parseInt(other.getValue(index));
+                }catch(NumberFormatException e){}
+                return false;
+
+            case ">":
+                try{
+                    return Integer.parseInt(this.getValue(index)) > Integer.parseInt(other.getValue(index));
+                }catch(NumberFormatException e){}
+                return false;
+
+            case ">=":
+                try{
+                    return Integer.parseInt(this.getValue(index)) >= Integer.parseInt(other.getValue(index));
+                }catch(NumberFormatException e){}
+                return false;
+
+            case "<=":
+                try{
+                    return Integer.parseInt(this.getValue(index)) <= Integer.parseInt(other.getValue(index));
+                }catch(NumberFormatException e){}
+                return false;
+
+            default:
+                System.out.println("ERROR: Unknown operands");
+                return false;
+        }
+    }
+
     public Attribute clone(){
         Attribute attribute = new Attribute(this.attributeName);
         for (int i = 0; i < attributeValue.size(); i++) {

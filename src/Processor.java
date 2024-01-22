@@ -12,13 +12,14 @@ public class Processor {
 
     public void executeCommand(String command, String context){
         switch (command.toLowerCase()){
-            case "create":
+            case "relation":
                 this.updateRelation(context);
                 break;
             case "get":
                 this.outputRelation(context);
                 break;
             case "select":
+                System.out.println(this.relationSelection(context));
                 break;
             case "project":
                 break;
@@ -87,32 +88,9 @@ public class Processor {
             System.out.println("ERROR: Relation not found");
             return null;
         }else{
-            String x = "";
-            if(input.contains(">")){x+=">";}
-            if(input.contains("<")){x+="<";}
-            if(input.contains("!")){x+="!";}
-            if(input.contains("=")){x+="=";}
-            switch (x){
-                case "=":
-                    break;
-                case "!=":
-                    break;
-                case "<":
-                    break;
-                case ">":
-                    break;
-                case ">=":
-                    break;
-                case "<=":
-                    break;
-                case "><":
-                    break;
-                default:
-                    System.out.println("ERROR: Unknown commands");
-            }
+            relation = relation.selection(relationName,selectCondition);
+            return relation;
         }
-
-        return null;
     }
 
 
