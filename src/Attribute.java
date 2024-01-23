@@ -29,9 +29,7 @@ public class Attribute {
     public String getValue(int index){
         try{
             return attributeValue.get(index).toString();
-        }catch (IndexOutOfBoundsException e){
-
-        }
+        }catch (IndexOutOfBoundsException e){}
         return "null";
     }
     public boolean compareValue(Attribute other,String operation,int index){
