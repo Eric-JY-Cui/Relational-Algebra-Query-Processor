@@ -3,10 +3,18 @@ import java.util.ArrayList;
 public class Processor {
     private ArrayList<Relation> relations;
 
+    /**
+     * The processor class, contains the stored list of relations and the operation of each command
+     */
     public Processor(){
         relations = new ArrayList<Relation>();
     }
 
+    /**
+     * determine the specified function executed requested by the command
+     * @param input the String input by the user
+     * @return the output of the specified function
+     */
     public Relation executeCommand(String input){
         String command;
         String context;
@@ -44,6 +52,10 @@ public class Processor {
         }
     }
 
+    /**
+     * print the list of command for the program
+     * @return a custom Relation object such that when toString it prints a message
+     */
     public Relation displayHelp(){
         System.out.println("relation x(a,b,c){l,m,n,o,p}   -- create (or update if exist) a relation x with attribute a, b, and c such that a(l,o), b(m,p), c(n,null)");
         System.out.println("relation x = <other command>   -- have relation x equal to the output of another command");
@@ -73,7 +85,11 @@ public class Processor {
         return null;
     }
 
-
+    /**
+     * Update the specified relation attribute, if not found then create one with the same name.
+     * @param input the formatted string of the relation and its attributes (or command output).
+     * @return a custom Relation object such that when toString it prints relation updated success.
+     */
     public Relation updateRelation(String input){
         if(input.contains("=")){
             String targetName = input.substring(0,input.indexOf("=")).replaceAll(" ","");
@@ -113,6 +129,12 @@ public class Processor {
         }
         return generateMessage("Relation " + relation.getName() + " updated successfully");
     }
+
+    /**
+     *
+     * @param input Display the selected relation in toString format
+     * @return the relation by the name or not found message if not found
+     */
     public Relation outputRelation(String input){
         input = input.replaceAll(" ","");
         if(findRelationByName(input) == null){
@@ -122,6 +144,11 @@ public class Processor {
         }
     }
 
+    /**
+     * Return the selection result of a relation
+     * @param input the formatted string of the relation and its selection condition.
+     * @return a clone of the relation after the selection.
+     */
     public Relation relationSelection(String input){
         input = input.replaceAll(" ","");
         String relationName = input.substring(0,input.indexOf('('));
@@ -135,6 +162,11 @@ public class Processor {
         }
     }
 
+    /**
+     * Return the projection result of a relation
+     * @param input the formatted string of the relation with its projection attributes.
+     * @return a clone of the relation after the projection.
+     */
     public Relation relationProjection(String input){
         input = input.replaceAll(" ","");
         String relationName = input.substring(0,input.indexOf('('));
@@ -148,6 +180,11 @@ public class Processor {
         }
     }
 
+    /**
+     * Return the projection result of two relation
+     * @param input the formatted string of the two relation with their join attributes.
+     * @return a clone of the two relation after the join.
+     */
     public Relation relationJoin(String input){
         input = input.replaceAll(" ","");
         String relationName = input.substring(0,input.indexOf('('));
@@ -172,6 +209,11 @@ public class Processor {
         return relation1.join(attribute1,attribute2,relation2);
     }
 
+    /**
+     * Return the intersection result of two relation
+     * @param input the formatted string of the two relation.
+     * @return a relation that is the intersection of the two relations.
+     */
     public Relation relationIntersection(String input){
         input = input.replaceAll(" ","");
         String relationName1 = input.substring(0,input.indexOf('('));
@@ -184,6 +226,12 @@ public class Processor {
         return relation1.intersection(relation2);
 
     }
+
+    /**
+     * Return the union result of two relation
+     * @param input the formatted string of the two relation.
+     * @return a relation that is the union of the two relations.
+     */
     public Relation relationUnion(String input){
         input = input.replaceAll(" ","");
         String relationName1 = input.substring(0,input.indexOf('('));
@@ -196,6 +244,12 @@ public class Processor {
         return relation1.union(relation2);
 
     }
+
+    /**
+     * Return the subtraction result of two relation
+     * @param input the formatted string of the two relation.
+     * @return a relation that is the subtraction of the two relations.
+     */
     public Relation relationMinus(String input){
         input = input.replaceAll(" ","");
         String relationName1 = input.substring(0,input.indexOf('('));
@@ -208,6 +262,12 @@ public class Processor {
         return relation1.minus(relation2);
 
     }
+
+    /**
+     * Create a custom relation such that it prints a message when toString.
+     * @param message the message that the relation prints.
+     * @return the custom relation
+     */
     private Relation generateMessage(String message){
         Relation relation = new Relation("");
         relation.addAttribute(new Attribute(message));
