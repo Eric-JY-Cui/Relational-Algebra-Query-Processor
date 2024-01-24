@@ -22,7 +22,8 @@ public class Command {
     }
     public static void main(String[] args) {
         new Command();
-        /**relation x(a, b, c){1,2,3,4,5,6}
+        /**
+         * relation x(a, b, c){1,2,3,4,5,6}
          * relation y(d,e){6,7,3,8,0,7}
          * relation x=e
          * select x(a>3)

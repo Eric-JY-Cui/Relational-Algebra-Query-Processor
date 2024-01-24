@@ -8,8 +8,16 @@ public class Processor {
     }
 
     public Relation executeCommand(String input){
-        String command = input.substring(0,input.indexOf(' '));
-        String context = input.substring(input.indexOf(' ')+1);
+        String command;
+        String context;
+        if(input.contains(" ")){
+            command = input.substring(0,input.indexOf(' '));
+            context = input.substring(input.indexOf(' ')+1);
+        }else{
+            command = input;
+            context = "";
+        }
+
         switch (command.toLowerCase()){
             case "":
                 return executeCommand(input.substring(1));
@@ -29,9 +37,26 @@ public class Processor {
                 return this.relationUnion(context);
             case "minus":
                 return this.relationMinus(context);
+            case "help":
+                return this.displayHelp();
             default:
                 return generateMessage("Unknown Command, type help for more info");
         }
+    }
+
+    public Relation displayHelp(){
+        System.out.println("relation x(a,b,c){l,m,n,o,p}   -- create (or update if exist) a relation x with attribute a, b, and c such that a(l,o), b(m,p), c(n,null)");
+        System.out.println("relation x = <other command>   -- have relation x equal to the output of another command");
+        System.out.println("get x   -- output the attributes of relation x in a table format");
+        System.out.println("select x(m>3)   -- output the value of relation x with attribute m greater than 3");
+        System.out.println("\taccepted operators are: >, <, >=, <=, =, != (only = and != accepted for none integer value)");
+        System.out.println("project x(m,n)   -- output relation x with only m and n as attribute");
+        System.out.println("join x(m,n)y   -- output the value of relation x and relation y joined by attribute m in relation x and attribute n in relation y");
+        System.out.println("intersect x(y)   -- output the intersection result of relation x and y");
+        System.out.println("union x(y)   -- output the union result of relation x and y");
+        System.out.println("minus x(y)   -- output the result of relation x subtracted by y");
+        System.out.println("help   -- open this dialogue");
+        return generateMessage("*Please note that failsafe are not perfectly implemented for now and thus program may be bugged when not used properly");
     }
 
     /**
@@ -76,13 +101,13 @@ public class Processor {
         relation.voidAttributes();
         relation.addAttribute(attributeNameList.split(","));
         for (int i = 0; i < attributeValueList.length;) {
-            for(Object a:relation.getAttributes()){
-                Attribute x = (Attribute)a;
+            for(Attribute a:relation.getAttributes()){
+                Attribute x = a;
                 if(i<attributeValueList.length){
                     x.addAttributeValue(attributeValueList[i]);
                     i++;
                 }else{
-                    x.addAttributeValue();
+                    x.addAttributeValue("null");
                 }
             }
         }
@@ -131,9 +156,7 @@ public class Processor {
         Relation relation2 = findRelationByName(relationName);
         if(relation1 == null || relation2 == null){
             return generateMessage("ERROR: Relation not found");
-
         }
-
         String selectCondition = input.substring(input.indexOf('(')+1,input.indexOf(')'));
         Attribute attribute1;
         Attribute attribute2;
@@ -146,9 +169,7 @@ public class Processor {
             return generateMessage("ERROR: Attribute Format Error");
         }
 
-
         return relation1.join(attribute1,attribute2,relation2);
-
     }
 
     public Relation relationIntersection(String input){
@@ -187,15 +208,9 @@ public class Processor {
         return relation1.minus(relation2);
 
     }
-
-
-
     private Relation generateMessage(String message){
         Relation relation = new Relation("");
         relation.addAttribute(new Attribute(message));
         return relation;
     }
-
-
-
 }
