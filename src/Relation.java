@@ -40,9 +40,15 @@ public class Relation {
 
     /**
      * remove an attribute from the relation
-     * @param attribute the attribute to be removed
+     * @param attributeName the attribute to be removed
      */
-    public void removeAttribute(Attribute attribute){attributes.remove(attribute);}
+    public void removeAttribute(String attributeName){
+        for (int i = 0; i < attributes.size(); i++) {
+            if(attributeName.equals(attributes.get(i).getName())){
+                attributes.remove(i);
+            }
+        }
+    }
 
     /**
      * add a value for every attribute in the relation
@@ -115,7 +121,7 @@ public class Relation {
         for (int i = 0; i < other.getDepth(); i++) {
             boolean hasCommon = true;
             for(Attribute thisAttribute:this.attributes){
-                Attribute otherAttribute = other.findAttributeByName(thisAttribute.getName());
+                Attribute otherAttribute = other.findAttributeByName(thisAttribute.getName(),false);
                 if(otherAttribute != null){
                     if(!thisAttribute.getValue(index).equals(otherAttribute.getValue(i))){
                         hasCommon = false;
@@ -229,7 +235,7 @@ public class Relation {
         Relation relation = this.clone();
         for(Attribute attribute:attributes){
             if(other.findAttributeByName(attribute.getName(),false) == null){
-                relation.removeAttribute(attribute);
+                relation.removeAttribute(attribute.getName());
             }
         }
         for (int i = 0; i < other.getDepth(); i++) {
@@ -248,12 +254,11 @@ public class Relation {
     public Relation minus(Relation other){
         Relation relation = this.clone();
         for(Attribute attribute:attributes){
-            if(this.findAttributeByName(attribute.getName(),false) == null){
-                relation.removeAttribute(attribute);
+            if(other.findAttributeByName(attribute.getName(),false) == null){
+                relation.removeAttribute(attribute.getName());
             }
         }
         for (int i = this.getDepth()-1; i >= 0; i--) {
-            System.out.println("***");
             if(this.hasCommonValue(other,i)){
                 relation.removeAttributeValueIndex(i);
             }

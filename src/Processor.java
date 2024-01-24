@@ -60,10 +60,10 @@ public class Processor {
         System.out.println("relation x(a,b,c){l,m,n,o,p}   -- create (or update if exist) a relation x with attribute a, b, and c such that a(l,o), b(m,p), c(n,null)");
         System.out.println("relation x = <other command>   -- have relation x equal to the output of another command");
         System.out.println("get x   -- output the attributes of relation x in a table format");
-        System.out.println("select x(m>3)   -- output the value of relation x with attribute m greater than 3");
+        System.out.println("select x(m>3)   -- output the value of relation x with a condition, in this case, when attribute m greater than 3");
         System.out.println("\taccepted operators are: >, <, >=, <=, =, != (only = and != accepted for none integer value)");
         System.out.println("project x(m,n)   -- output relation x with only m and n as attribute");
-        System.out.println("join x(m,n)y   -- output the value of relation x and relation y joined by attribute m in relation x and attribute n in relation y");
+        System.out.println("join x(m=n)y   -- output the value of relation x and relation y joined by attribute m in relation x and attribute n in relation y");
         System.out.println("intersect x(y)   -- output the intersection result of relation x and y");
         System.out.println("union x(y)   -- output the union result of relation x and y");
         System.out.println("minus x(y)   -- output the result of relation x subtracted by y");
