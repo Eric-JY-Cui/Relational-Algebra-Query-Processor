@@ -3,32 +3,34 @@ import java.util.ArrayList;
 public class Processor {
     private ArrayList<Relation> relations;
 
-
-
     public Processor(){
         relations = new ArrayList<Relation>();
-
     }
 
-    public void executeCommand(String command, String context){
+    public Relation executeCommand(String input){
+        String command = input.substring(0,input.indexOf(' '));
+        String context = input.substring(input.indexOf(' ')+1);
         switch (command.toLowerCase()){
+            case "":
+                return executeCommand(input.substring(1));
             case "relation":
-                this.updateRelation(context);
-                break;
+                return this.updateRelation(context);
             case "get":
-                this.outputRelation(context);
-                break;
+                return this.outputRelation(context);
             case "select":
-                System.out.println(this.relationSelection(context));
-                break;
+                return this.relationSelection(context);
             case "project":
-                break;
+                return this.relationProjection(context);
             case "join":
-                break;
-            case "set":
-                break;
+                return this.relationJoin(context);
+            case "intersect":
+                return  this.relationIntersection(context);
+            case "union":
+                return this.relationUnion(context);
+            case "minus":
+                return this.relationMinus(context);
             default:
-                System.out.println("Unknown command, type help for command list");
+                return generateMessage("Unknown Command, type help for more info");
         }
     }
 
@@ -47,9 +49,22 @@ public class Processor {
     }
 
 
-    public void updateRelation(String input){
+    public Relation updateRelation(String input){
+        if(input.contains("=")){
+            String targetName = input.substring(0,input.indexOf("=")).replaceAll(" ","");
+            Relation target = findRelationByName(targetName);
+            if(target == null){
+                target = new Relation(targetName);
+                relations.add(target);
+            }
+            Relation value = executeCommand(input.substring(input.indexOf('=')+1));
+            for(Attribute attribute: value.getAttributes()){
+                target.addAttribute(attribute.clone());
+            }
+            return generateMessage("Relation " + target.getName() + " updated successfully");
+        }
+
         input = input.replaceAll(" ","");
-        input = input.replaceAll("\n","");
         String relationName = input.substring(0,input.indexOf('('));
         String attributeNameList = input.substring(input.indexOf('(')+1,input.indexOf(')'));
         String[] attributeValueList = input.substring(input.indexOf('{')+1,input.indexOf('}')).split(",");
@@ -71,28 +86,115 @@ public class Processor {
                 }
             }
         }
+        return generateMessage("Relation " + relation.getName() + " updated successfully");
     }
-    public void outputRelation(String input){
+    public Relation outputRelation(String input){
+        input = input.replaceAll(" ","");
         if(findRelationByName(input) == null){
-            System.out.println("no such relation");
+            return generateMessage("ERROR: Relation not found");
         }else{
-            System.out.println(findRelationByName(input).toString());
+            return findRelationByName(input);
         }
     }
 
     public Relation relationSelection(String input){
+        input = input.replaceAll(" ","");
         String relationName = input.substring(0,input.indexOf('('));
         String selectCondition = input.substring(input.indexOf('(')+1,input.indexOf(')'));
         Relation relation = findRelationByName(relationName);
         if(relation == null){
-            System.out.println("ERROR: Relation not found");
-            return null;
+            return generateMessage("ERROR: Relation not found");
         }else{
             relation = relation.selection(relationName,selectCondition);
             return relation;
         }
     }
 
+    public Relation relationProjection(String input){
+        input = input.replaceAll(" ","");
+        String relationName = input.substring(0,input.indexOf('('));
+        String selectCondition = input.substring(input.indexOf('(')+1,input.indexOf(')'));
+        Relation relation = findRelationByName(relationName);
+        if(relation == null){
+            return generateMessage("ERROR: Relation not found");
+        }else{
+            relation = relation.projection(relationName,selectCondition);
+            return relation;
+        }
+    }
+
+    public Relation relationJoin(String input){
+        input = input.replaceAll(" ","");
+        String relationName = input.substring(0,input.indexOf('('));
+        Relation relation1 = findRelationByName(relationName);
+        relationName = input.substring(input.indexOf(')')+1);
+        Relation relation2 = findRelationByName(relationName);
+        if(relation1 == null || relation2 == null){
+            return generateMessage("ERROR: Relation not found");
+
+        }
+
+        String selectCondition = input.substring(input.indexOf('(')+1,input.indexOf(')'));
+        Attribute attribute1;
+        Attribute attribute2;
+        try{
+            String[] attributeName = selectCondition.split("=");
+            attribute1 = relation1.findAttributeByName(attributeName[0]);
+            attribute2 = relation2.findAttributeByName(attributeName[1]);
+
+        }catch (IndexOutOfBoundsException e){
+            return generateMessage("ERROR: Attribute Format Error");
+        }
+
+
+        return relation1.join(attribute1,attribute2,relation2);
+
+    }
+
+    public Relation relationIntersection(String input){
+        input = input.replaceAll(" ","");
+        String relationName1 = input.substring(0,input.indexOf('('));
+        Relation relation1 = findRelationByName(relationName1);
+        String relationName2 = input.substring(input.indexOf('(')+1,input.indexOf(')'));
+        Relation relation2 = findRelationByName(relationName2);
+        if(relation1 == null || relation2 == null){
+            return generateMessage("ERROR: Relation not found");
+        }
+        return relation1.intersection(relation2);
+
+    }
+    public Relation relationUnion(String input){
+        input = input.replaceAll(" ","");
+        String relationName1 = input.substring(0,input.indexOf('('));
+        Relation relation1 = findRelationByName(relationName1);
+        String relationName2 = input.substring(input.indexOf('(')+1,input.indexOf(')'));
+        Relation relation2 = findRelationByName(relationName2);
+        if(relation1 == null || relation2 == null){
+            return generateMessage("ERROR: Relation not found");
+        }
+        return relation1.union(relation2);
+
+    }
+    public Relation relationMinus(String input){
+        input = input.replaceAll(" ","");
+        String relationName1 = input.substring(0,input.indexOf('('));
+        Relation relation1 = findRelationByName(relationName1);
+        String relationName2 = input.substring(input.indexOf('(')+1,input.indexOf(')'));
+        Relation relation2 = findRelationByName(relationName2);
+        if(relation1 == null || relation2 == null){
+            return generateMessage("ERROR: Relation not found");
+        }
+        return relation1.minus(relation2);
+
+    }
+
+
+
+    private Relation generateMessage(String message){
+        Relation relation = new Relation("");
+        relation.addAttribute(new Attribute(message));
+        return relation;
+    }
 
 
 

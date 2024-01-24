@@ -18,14 +18,16 @@ public class Attribute {
     public void addAttributeValue(String value){
         attributeValue.add(value);
     }
+    public int getSize(){return attributeValue.size();}
     public void addAttributeValue(Boolean value){
         attributeValue.add(value+"");
     }
     public void addAttributeValue(String[] value){
         for(String i:value){attributeValue.add(i);}
     }
+    public void clearAttributeValue(){attributeValue = new ArrayList<String>();}
     public String getName(){return attributeName;}
-    public ArrayList getValues() {return attributeValue;}
+    public ArrayList<String> getValues() {return attributeValue;}
     public String getValue(int index){
         try{
             return attributeValue.get(index).toString();

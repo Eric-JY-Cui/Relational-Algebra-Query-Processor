@@ -16,17 +16,27 @@ public class Command {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter your command:");
         String input = scanner.nextLine().toLowerCase();
-        String command = input.substring(0,input.indexOf(' '));
-        String context = input.substring(input.indexOf(' ')+1);
-        processor.executeCommand(command,context);
+        System.out.println(processor.executeCommand(input));
         System.out.println("----------------------------------------");
         commandInput();
     }
     public static void main(String[] args) {
         new Command();
-        /**relation employee(a, b, c){1,2,3,4,5,6}
-         * relation employee=e
-         * select employee(a>3)
+        /**relation x(a, b, c){1,2,3,4,5,6}
+         * relation y(d,e){6,7,3,8,0,7}
+         * relation x=e
+         * select x(a>3)
+         * project x(b,c)
+         * join x(c=d)y
+         * relation y = project x(b,c)
+         */
+
+        /**
+         * relation x(a, b){1,11,2,22,3,33,4,44}
+         * relation y(a, b){1,11,5,55,6,66,3,33,9,99}
+         * intersect x(y)
+         * union x(y)
+         * minus x(y)
          */
 
 
